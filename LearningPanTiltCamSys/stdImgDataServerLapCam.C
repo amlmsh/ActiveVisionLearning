@@ -66,6 +66,7 @@ using namespace std;
 
 
 unsigned short SERVER_PORT_;
+unsigned short CAMERA_CHOOSE_;
 int CAMERA_COLOR_;
 int WINDOW_WIDTH_;
 int WINDOW_HEIGHT_;
@@ -113,6 +114,7 @@ int main(int argc, char *argv[]){
 	printInfo(argc, argv);
 	try{
 	  SERVER_PORT_   = (unsigned short) atoi(argv[1]);
+	  CAMERA_CHOOSE_ = atoi(argv[2]);
 	}catch(...){
 		cerr << "Can't read all parameter values, terminate programm.\n\n";
 		exit(0);
@@ -120,7 +122,7 @@ int main(int argc, char *argv[]){
 
 
 	//CvCapture  *capture   = cvCaptureFromCAM(-1);  // internal webcam
-	CvCapture  *capture   = cvCaptureFromCAM(2);
+	CvCapture  *capture   = cvCaptureFromCAM(CAMERA_CHOOSE_);
 	IplImage       *rgb   = cvQueryFrame( capture );
 
 	WINDOW_HEIGHT_ = rgb->height;
@@ -292,15 +294,16 @@ unsigned char randomByte(){
 
 
 void printInfo(int argc, char *argv[]){
-		  if (argc == 2){
+		  if (argc == 3){
 			  return;
-		  }else if (argc == 3){
+		  }else if (argc == 2){
 			  printCompleteLicense(argc,argv);
 		  }else{     // Test for correct number of arguments
 		    cerr << "Usage of " << argv[0] << " : \n\n"
-		         << argv[0] << " <port> " << endl;
+		         << argv[0] << " <port>  <cameraID>" << endl;
 		    cerr << "\n"
-		    	 << "<port>          port number of this server\n";
+		    	 << "<port>          port number of this server\n"
+		    	 << "<cameraID>      choose number of camera\n";
 		    printLicense(argc,argv);
 		  };
 };
