@@ -16,11 +16,11 @@ CC = g++
 
 
 CFLAGS=$(shell pkg-config --cflags opencv)   -std=c++11  -std=c++0x
-LIBS=$(shell pkg-config --libs opencv) -std=c++11  -std=c++0x
+LIBS=$(shell pkg-config --libs opencv) -lxerces-c  -std=c++11  -std=c++0x
 
 
 
-TARGETS = stdImgDataServerSim  testClient stdImgDataServerLapCam stdImgDataServerClientColorFilter stdImgDataServerClientBlobDetector testClientBlobDetector testOppBlobDetector demoPanTiltCam
+TARGETS = stdImgDataServerSim  testClient stdImgDataServerLapCam stdImgDataServerClientColorFilter stdImgDataServerClientBlobDetector testClientBlobDetector testOppBlobDetector demoPanTiltCam setPosPanTilt
 
 
 all:	$(TARGETS)
@@ -56,6 +56,10 @@ testClientBlobDetector.o:	testClientBlobDetector.C  StdImgDataServerProtocol.H
 testOppBlobDetector.o:	testOppBlobDetector.C BlobDetector.C BlobDetector.H
 	$(CC) $(CFLAGS) $(INCL)   -g -DLINUX -D__LINUX__ -DUNIX -D_REENTRANT   -c $<
 	
+setPosPanTilt.o:	setPosPanTilt.C
+	$(CC) $(CFLAGS) $(INCL)   -g -DLINUX -D__LINUX__ -DUNIX -D_REENTRANT   -c $<	
+	
+	
 SerialCom.o:	SerialCom.C SerialCom.H
 	$(CC) $(CFLAGS) $(INCL)   -g -DLINUX -D__LINUX__ -DUNIX -D_REENTRANT   -c $<
 
@@ -65,8 +69,17 @@ PanTilt.o:	PanTilt.C PanTilt.H
 PanTiltCam.o:	PanTiltCam.C PanTiltCam.H
 	$(CC) $(CFLAGS) $(INCL)   -g -DLINUX -D__LINUX__ -DUNIX -D_REENTRANT   -c $<		
 	
+CBaseMap.o:	CBaseMap.C CBaseMap.H
+	$(CC) $(CFLAGS) $(INCL)   -g -DLINUX -D__LINUX__ -DUNIX -D_REENTRANT   -c $<
+	
+CXmlMap.o:	CXmlMap.C CXmlMap.H
+	$(CC) $(CFLAGS) $(INCL)   -g -DLINUX -D__LINUX__ -DUNIX -D_REENTRANT   -c $<
+	
+CMemoryMap.o:	CMemoryMap.C CMemoryMap.H
+	$(CC) $(CFLAGS) $(INCL)   -g -DLINUX -D__LINUX__ -DUNIX -D_REENTRANT   -c $<
+
 demoPanTiltCam.o:	demoPanTiltCam.C
-	$(CC) $(CFLAGS) $(INCL)   -g -DLINUX -D__LINUX__ -DUNIX -D_REENTRANT   -c $<	
+	$(CC) $(CFLAGS) $(INCL)   -g -DLINUX -D__LINUX__ -DUNIX -D_REENTRANT   -c $<		
 
 stdImgDataServerSim: Socket.o stdImgDataServerSim.o StdImgDataServerProtocol.H
 	$(CC) $(INCL) -I/usr/local/lib   \
@@ -99,9 +112,13 @@ testClientBlobDetector:	testClientBlobDetector.o Socket.o testClientBlobDetector
 testOppBlobDetector:	testOppBlobDetector.o Socket.o BlobDetector.o StdImgDataServerProtocol.H
 	$(CC)  testOppBlobDetector.o Socket.o BlobDetector.o  -o testOppBlobDetector $(LIBS) -ldl -lstdc++ -lm -std=c++11 \
 
-demoPanTiltCam: PanTiltCam.H PanTiltCam.C demoPanTiltCam.o demoPanTiltCam.o PanTiltCam.o PanTilt.o SerialCom.o Socket.o BlobDetector.o
-	$(CC) $(CFLAGS) demoPanTiltCam.o PanTiltCam.o PanTilt.o SerialCom.o Socket.o BlobDetector.o -o demoPanTiltCam $(LIBS) -ldl -lstdc++ -lm -std=c++11
+demoPanTiltCam: PanTiltCam.H PanTiltCam.C demoPanTiltCam.o demoPanTiltCam.o PanTiltCam.o PanTilt.o SerialCom.o Socket.o BlobDetector.o CBaseMap.o CXmlMap.o CMemoryMap.o
+	$(CC) $(CFLAGS) demoPanTiltCam.o PanTiltCam.o PanTilt.o SerialCom.o Socket.o BlobDetector.o CBaseMap.o CXmlMap.o -o demoPanTiltCam $(LIBS) -ldl -lstdc++ -lm -std=c++11
+
+setPosPanTilt: setPosPanTilt.o PanTilt.o SerialCom.o 
+	$(CC) $(CFLAGS) setPosPanTilt.o PanTilt.o SerialCom.o -o setPosPanTilt $(LIBS) -ldl -lstdc++ -lm -std=c++11
+
 
 #cleaning up
 clean:
-	rm -r *.o  $(TARGETS) ./DOXYGENDOC
+	rm -r *.o  *.sh~   $(TARGETS) ./DOXYGENDOC
