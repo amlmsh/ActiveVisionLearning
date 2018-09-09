@@ -6,6 +6,8 @@
  */
 
 #include "PanTiltCam.H"
+#include <iostream>
+
 
 namespace PanTiltCamSys{
 
@@ -149,8 +151,15 @@ void PanTiltCamDegree::setPanAngle(int position){
 		throw msg;
 	}
 
+	int targetPos = position;
+	if(targetPos < minPan_){
+		targetPos = minPan_;
+	}else if(targetPos > maxPan_){
+		targetPos = maxPan_;
+	}
+
 	try{
-		this->panTiltDeg_->setPanAngle(position);
+		this->panTiltDeg_->setPanAngle(targetPos);
 	}catch(string msg){
 		throw msg;
 	}catch(...){
@@ -173,8 +182,17 @@ void PanTiltCamDegree::setTiltAngle(int position){
 		throw msg;
 	}
 
+
+
+	int targetPos = position;
+	if(targetPos < minTilt_){
+		targetPos = minTilt_;
+	}else if(targetPos > maxTilt_){
+		targetPos = maxTilt_;
+	}
+
 	try{
-		this->panTiltDeg_->setTiltAngle(position);
+		this->panTiltDeg_->setTiltAngle(targetPos);
 	}catch(string msg){
 		throw msg;
 	}catch(...){
@@ -196,8 +214,10 @@ void PanTiltCamDegree::changePanAngle(int deltaPosition){
 		throw msg;
 	}
 
+
 	try{
-		this->panTiltDeg_->changePanAngle(deltaPosition);
+		int targetPos = this->getPanAngle() + deltaPosition;
+		this->setPanAngle(targetPos);
 	}catch(string msg){
 		throw msg;
 	}catch(...){
@@ -220,7 +240,9 @@ void PanTiltCamDegree::changeTiltAngle(int deltaPosition){
 	}
 
 	try{
-		this->panTiltDeg_->changeTiltAngle(deltaPosition);
+		int targetPos = this->getTiltAngle() + deltaPosition;
+		cout << "change to position " << targetPos << endl;
+		this->setTiltAngle(targetPos);
 	}catch(string msg){
 		throw msg;
 	}catch(...){
@@ -228,6 +250,21 @@ void PanTiltCamDegree::changeTiltAngle(int deltaPosition){
 	};
 
 };
+
+
+void PanTiltCamDegree::setRange(int minPan, int maxPan, int minTilt, int maxTilt){
+	if((maxPan - minPan) < 0){
+		throw string("pan range wrong (min > max)");
+	}
+	if((maxTilt - minTilt) < 0){
+		throw string("tilt range wrong (min > max)");
+	}
+
+	this->minPan_  = minPan;
+	this->maxPan_  = maxPan;
+	this->minTilt_ = minTilt;
+	this->maxTilt_ = maxTilt;
+}
 
 void PanTiltCamDegree::getBlobCoord(int *X, int *Y){
 	this->blobD_->getBlobCoord(X,Y);

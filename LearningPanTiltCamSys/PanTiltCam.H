@@ -93,6 +93,10 @@ public:
 
 	virtual void getBlobCoord(int *X, int *Y) = 0;
 
+
+
+	virtual void setRange(int minPan, int maxPan, int minTilt, int maxTilt)=0;
+
 };
 
 
@@ -114,9 +118,15 @@ public:
 	virtual void changePanAngle(int deltaPosition);
 	virtual void changeTiltAngle(int deltaPosition);
 	virtual void getBlobCoord(int *X, int *Y);
+	virtual void setRange(int minPan, int maxPan, int minTilt, int maxTilt);
 protected:
 	BlobDetector::IBlobDetector *blobD_;
 	PanTilt::IPanTiltDegree *panTiltDeg_;
+
+	int minPan_;
+	int maxPan_;
+	int minTilt_;
+	int maxTilt_;
 };
 
 
