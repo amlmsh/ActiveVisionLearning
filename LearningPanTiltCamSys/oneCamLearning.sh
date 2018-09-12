@@ -21,29 +21,34 @@ fi
 
 SERVER="127.0.0.1"
 
-BASE_PORT=7000
-
-CAM1_PORT=1
+CAM_PORT=1
 CAM_SRV_PORT=$(($BASE_PORT+0))
 COLOR_FILTER_PORT=$(($BASE_PORT+10))
 BLOB_DETECT_PORT=$(($BASE_PORT+20))
 
 
+# right camera 
+CAM_PAN_TILT_DEV=/dev/ttyUSB0
+CAM_INIT_PAN=-25;
+CAM_INIT_TILT=20;
 
-LASER_DEV=/dev/ttyUSB2
-LASER_INIT_PAN=17
-LASER_INIT_TILT=-10
 
-CAM1_DEV=/dev/ttyUSB0
-CAM_INIT_PAN=0;
-CAM_INIT_TILT=0;
+CAM_PAN_MIN=-45
+CAM_PAN_MAX=-10
+CAM_TILT_MIN=7
+CAM_TILT_MAX=34
+
+LASER_DEV=/dev/ttyUSB1
+LASER_INIT_PAN=0
+LASER_INIT_TILT=20
+
 
 
 
 
 #start blob detector
 #
-CMD="./stdImgDataServerLapCam $CAM_SRV_PORT $CAM1_PORT"
+CMD="./stdImgDataServerLapCam $CAM_SRV_PORT $CAM_PORT"
 echo $CMD
 xterm  -geometry 80x10+0+610 -hold -e $CMD &
 echo "wait for cam server to be ready"
@@ -84,7 +89,7 @@ read c
 
 #move cam to specified position
 #
-CMD="./setPosPanTilt $CAM1_DEV $CAM_INIT_PAN $CAM_INIT_TILT"
+CMD="./setPosPanTilt $CAM_PAN_TILT_DEV $CAM_INIT_PAN $CAM_INIT_TILT"
 echo $CMD
 xterm  -geometry 80x10+0+610 -hold -e $CMD &
 echo "wait for cam server to be ready"
@@ -97,7 +102,7 @@ echo "...for continue press enter"
 read c
 
 
-CMD="./demoPanTiltCam $CAM1_DEV $SERVER $BLOB_DETECT_PORT"
+CMD="./demoPanTiltCam $CAM_PAN_TILT_DEV $SERVER $BLOB_DETECT_PORT $CAM_PAN_MIN $CAM_PAN_MAX $CAM_TILT_MIN $CAM_TILT_MAX"
 echo
 echo "You can now start learning via:"
 echo $CMD
